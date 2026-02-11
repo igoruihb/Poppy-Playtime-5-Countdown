@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poppy Playtime Chapter 5 - Broken Things</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blood-red: rgba(139, 0, 0, 0.9);
+            --glitch-red: #ff0000;
+            --glitch-blue: #00ffff;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #050000;
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* BACKGROUND */
+        .main-bg {
+            background-image: url('image_c53efb.jpg'); 
+            background-size: cover;
+            background-position: center;
+            height: 110vh;
+            width: 110vw;
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            z-index: 1;
+            animation: idle-sway 10s infinite ease-in-out;
+        }
+
+        /* RED IMPACT FLASH */
+        .blood-flash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, var(--blood-red) 0%, rgba(0,0,0,0) 80%);
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+            animation: flash-burst 5s infinite;
+        }
+
+        .overlay {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* --- SYNCED GLITCH SYSTEM --- */
+        .glitch-text {
+            position: relative;
+            animation: main-jitter 5s infinite;
+        }
+
+        /* Pseudo-elements for the RGB split effect */
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0;
+        }
+
+        .glitch-text::before {
+            color: var(--glitch-red);
+            z-index: -1;
+            animation: glitch-layers 5s infinite;
+        }
+
+        .glitch-text::after {
+            color: var(--glitch-blue);
+            z-index: -2;
+            animation: glitch-layers 5s infinite reverse;
+        }
+
+        .header-style {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            font-size: 3rem;
+            color: #ff0000;
+            text-shadow: 4px 4px 0px #000;
+            margin: 25px 0;
+            letter-spacing: 4px;
+        }
+
+        /* --- ANIMATIONS --- */
+
+        @keyframes idle-sway {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(1%, 1%); }
+        }
+
+        @keyframes flash-burst {
+            0%, 88% { opacity: 0; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes main-jitter {
+            0%, 88% { transform: none; filter: none; }
+            89% { transform: translate(-4px, 2px); filter: contrast(150%); }
+            91% { transform: translate(4px, -2px); }
+            93% { transform: translate(-2px, 3px); }
+            95% { transform: none; filter: none; }
+        }
+
+        @keyframes glitch-layers {
+            0%, 88% { opacity: 0; transform: none; }
+            89% { opacity: 1; transform: translate(8px, -4px); }
+            91% { opacity: 1; transform: translate(-8px, 4px); }
+            93% { opacity: 0; transform: none; }
+        }
+
+        @media (max-width: 650px) {
+            .timer { font-size: 1.4rem; }
+            .header-style { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-bg"></div>
+    <div class="blood-flash"></div>
+
+    <div class="overlay">
+        <div class="glitch-text header-style" data-text="POPPY PLAYTIME CHAPTER 5:&#10;BROKEN THINGS RELEASES IN:">
+            POPPY PLAYTIME CHAPTER 5:<br>BROKEN THINGS RELEASES IN:
+        </div>
+        
+        <div id="countdown-glitch" class="glitch-text timer" data-text="00:00:00:00">
+            00:00:00:00
+        </div>
+
+        <p style="font-size: 0.6rem; color: #777; max-width: 80%;">
+            If not released when the timer hits 0, it will in the next few hours.
+        </p>
+    </div>
+
+    <script>
+        const targetDate = new Date("Feb 18, 2026 17:00:00 GMT+0100").getTime();
+        const timerElement = document.getElementById("countdown-glitch");
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            let timeString = "OUT NOW";
+
+            if (diff > 0) {
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                timeString = `${d}:${h}:${m}:${s}`;
+            }
+
+            // Important: update both the text and the data-text attribute for the glitch layers
+            timerElement.innerHTML = timeString;
+            timerElement.setAttribute('data-text', timeString);
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
